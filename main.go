@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/hoangggg5/learn-go/config"
-	"github.com/hoangggg5/learn-go/models"
-	"github.com/hoangggg5/learn-go/routes"
+	"github.com/hoanggggg5/learn-go/config"
+	"github.com/hoanggggg5/learn-go/models"
+	route "github.com/hoanggggg5/learn-go/routes"
 )
 
 func main() {
@@ -11,5 +11,5 @@ func main() {
 
 	config.Database.AutoMigrate(models.User{})
 
-	routes.InitRouter()
+	route.InitRouter()
 }
