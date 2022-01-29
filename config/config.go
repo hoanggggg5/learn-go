@@ -1,10 +1,12 @@
 package config
 
 import (
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
+var Store = session.New()
 var Database *gorm.DB
 
 func InitConfig() {

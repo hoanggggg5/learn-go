@@ -1,12 +1,10 @@
-package resources
+package identity
 
 import (
-	"log"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/hoanggggg5/learn-go/config"
+	"github.com/hoanggggg5/learn-go/controllers/entities"
 	"github.com/hoanggggg5/learn-go/models"
-	"github.com/huuhait/go-learn/controllers/entities"
 )
 
 func userToEntity(user *models.User) entities.User {
@@ -21,26 +19,7 @@ func userToEntity(user *models.User) entities.User {
 	}
 }
 
-func GetMe(c *fiber.Ctx) error {
-	var user *models.User
-
-	session, _ := config.Store.Get(c)
-	email := session.Get("email")
-	log.Println(email)
-
-	if email != nil {
-		return c.JSON("loi")
-	}
-
-	if result := config.Database.First(&user, "email = ?", email); result.Error != nil {
-		session.Destroy()
-		return c.JSON("KO TÌM THẤY USER")
-	}
-
-	return c.JSON(userToEntity(user))
-}
-
-func CreateUser(c *fiber.Ctx) error {
+func Login(c *fiber.Ctx) error {
 	type Payload struct {
 		Email    string `json:"email" form:"email"`
 		Password string `json:"password" form:"password"`
@@ -49,7 +28,7 @@ func CreateUser(c *fiber.Ctx) error {
 	payload := new(Payload)
 
 	if err := c.BodyParser(payload); err != nil {
-		c.Status(422).JSON("LỖI")
+		return c.JSON("Lỗi")
 	}
 
 	user := &models.User{
@@ -57,7 +36,18 @@ func CreateUser(c *fiber.Ctx) error {
 		Password: payload.Password,
 	}
 
-	config.Database.Create(&user)
+	session, _ := config.Store.Get(c)
 
-	return c.JSON(userToEntity(user))
+	if result := config.Database.First(&user, "Email = ?", payload.Email); result.Error != nil {
+		session.Destroy()
+		return c.Status(422).JSON("error")
+	}
+
+	session.Set("email", user.Email)
+
+	if err := session.Save(); err != nil {
+		return c.JSON("LỖI lưu cookie")
+	}
+
+	return c.Status(201).JSON(userToEntity(user))
 }
