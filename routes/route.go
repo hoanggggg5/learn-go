@@ -15,7 +15,7 @@ func InitRouter() {
 	app.Get("/public/getTimestamp", public.GetTimestamp)
 	app.Post("/resource/users/create", resources.CreateUser)
 	app.Post("/login", identity.Login)
-	app.Get("/getme", resources.GetMe)
+	app.Get("/resources/users/getme", resources.GetMe)
 
 	log.Fatal(app.Listen(":3000"))
 }

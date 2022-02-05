@@ -21,8 +21,8 @@ func userToEntity(user *models.User) entities.User {
 
 func Login(c *fiber.Ctx) error {
 	type Payload struct {
-		Email    string `json:"email" form:"email"`
-		Password string `json:"password" form:"password"`
+		Email    string `json:"email" form:"email" validate:"email" message:"email is invalid`
+		Password string `json:"password" form:"password" validate:"required"`
 	}
 
 	payload := new(Payload)
@@ -35,6 +35,8 @@ func Login(c *fiber.Ctx) error {
 		Email:    payload.Email,
 		Password: payload.Password,
 	}
+
+	helpers.Validate(user, "identity.user")
 
 	session, _ := config.Store.Get(c)
 

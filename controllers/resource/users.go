@@ -1,8 +1,6 @@
 package resources
 
 import (
-	"log"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/hoanggggg5/learn-go/config"
 	"github.com/hoanggggg5/learn-go/models"
@@ -26,15 +24,14 @@ func GetMe(c *fiber.Ctx) error {
 
 	session, _ := config.Store.Get(c)
 	email := session.Get("email")
-	log.Println(email)
 
-	if email != nil {
+	if email == nil {
 		return c.JSON("loi")
 	}
 
 	if result := config.Database.First(&user, "email = ?", email); result.Error != nil {
 		session.Destroy()
-		return c.JSON("KO TÌM THẤY USER")
+		return c.JSON("ko tim thay user")
 	}
 
 	return c.JSON(userToEntity(user))
