@@ -1,6 +1,8 @@
 package identity
 
 import (
+	"go/types"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/hoanggggg5/learn-go/config"
 	"github.com/hoanggggg5/learn-go/controllers/entities"
@@ -36,7 +38,11 @@ func Login(c *fiber.Ctx) error {
 		Password: payload.Password,
 	}
 
-	helpers.Validate(user, "identity.user")
+	if err := helpers.Vaildate(payload, "identity.user"); err != nil {
+		return c.Status(422).JSON(types.Error{
+			Error: err.Error(),
+		})
+	}
 
 	session, _ := config.Store.Get(c)
 
